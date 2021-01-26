@@ -1,4 +1,4 @@
-  
+
 showOptions();
 showData();
 optionChanged();
@@ -27,6 +27,16 @@ function showData() {
         samples = samples.filter(obj => obj.id == selection)[0];
         var { otu_ids, otu_labels, sample_values } = samples;
 
+        var barData = [{
+            x: sample_values.slice(0,10).reverse(),
+            y: otu_ids.slice(0,10).reverse().map(id => `OTU ${id}`),
+            text: otu_labels.slice(0,10).reverse(),
+            type: 'bar',
+            orientation: 'h'
+        }];
+
+        Plotly.newPlot('bar', barData);
+
         var bubbleData = [{
             x: otu_ids,
             y: sample_values,
@@ -37,3 +47,26 @@ function showData() {
                 size: sample_values
             }
         }];
+
+        Plotly.newPlot('bubble', bubbleData);
+
+        var gaugeData = [
+            {
+                domain: { x: [0, 1], y: [0, 1] },
+                value: metadata.wfreq,
+                title: { text: "Belly Button Wash Frequency <br> Scrubs per Week" },
+                type: "indicator",
+                mode: "gauge+number",
+                delta: { reference: 400 },
+                gauge: { axis: { range: [0, 9] } }
+            }
+        ];
+
+        var layout = { width: 600, height: 400 };
+        Plotly.newPlot('gauge', gaugeData, layout);
+    });
+};
+
+function optionChanged() {
+    showData();
+};
